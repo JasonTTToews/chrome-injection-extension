@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Iframe Injection Extension",
+  "version": "1.0.0",
+  "description": "Chrome extension for injecting iframe overlays on websites",
+  
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "sidePanel",
+    "storage"
+  ],
+  
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  
+  "background": {
+    "service_worker": "dist/background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["dist/content.js"]
+    }
+  ],
+  
+  "side_panel": {
+    "default_path": "src/sidepanel.html"
+  }
+}
