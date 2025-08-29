@@ -72,7 +72,17 @@
     }
 
     .section {
+      margin-bottom: 32px;
+      padding: 20px;
+      border-bottom: 2px solid #e5e7eb;
+      background: #fafbfc;
+      border-radius: 8px;
       margin-bottom: 24px;
+    }
+
+    .section:last-child {
+      border-bottom: 2px solid #e5e7eb;
+      margin-bottom: 0;
     }
 
     .section-title {
@@ -99,6 +109,18 @@
     .toggle-button:hover {
       background: #45a049;
       transform: translateY(-1px);
+    }
+
+    .toggle-button:disabled {
+      background: #9ca3af !important;
+      cursor: not-allowed;
+      transform: none;
+      opacity: 0.7;
+    }
+
+    .toggle-button:disabled:hover {
+      background: #9ca3af !important;
+      transform: none;
     }
 
     .url-input-container {
@@ -232,6 +254,18 @@
       font-size: 13px;
     }
 
+    .config-row .url-input-container {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      margin-left: 20px;
+    }
+
+    .config-row .toggle-button {
+      width: 100%;
+      margin: 0;
+    }
+
     .config-row:last-of-type {
       margin-bottom: 16px;
     }
@@ -242,19 +276,6 @@
       min-width: 100px;
     }
 
-    .config-select, .config-input {
-      padding: 6px 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 13px;
-      min-width: 100px;
-    }
-
-    .config-select:focus, .config-input:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-    }
 
     .config-checkbox {
       margin-right: 6px;
@@ -281,6 +302,105 @@
       background: #16a34a;
       border-color: #16a34a;
     }
+
+    .save-config-btn:disabled {
+      background: #9ca3af;
+      border-color: #9ca3af;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #dashboard-btn:hover {
+      background: #4b5563 !important;
+      border-color: #4b5563 !important;
+    }
+
+    /* Toggle Switch Styling */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .3s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: #2563eb;
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    /* Consistent input styling */
+    .config-input, .config-select {
+      padding: 6px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+      min-width: 100px;
+      font-family: inherit;
+    }
+
+    .config-input:focus, .config-select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    }
   </style>
 </head>
 <body>
@@ -291,30 +411,65 @@
     
     <div class="panel-content">
       <div class="section">
-        <h3 class="section-title">Iframe URL</h3>
-        <div class="url-input-container">
-          <input type="url" id="iframe-url" class="url-input" placeholder="http://localhost:3000/api/overlay">
-          <button id="save-url" class="save-url-btn">Save</button>
-        </div>
-      </div>
-
-      <div class="section">
-        <button id="toggle-overlay" class="toggle-button">
-          Toggle Overlay
-        </button>
-      </div>
-
-      <div class="section">
-        <h3 class="section-title">Configs</h3>
+        <h3 class="section-title">Iframe Config</h3>
         
         <div class="config-section">
           <div class="config-row">
-            <label class="config-label">Position:</label>
-            <select id="config-position" class="config-select">
-              <option value="left">Left</option>
-              <option value="right">Right</option>
-              <option value="center">Center</option>
-            </select>
+            <label class="config-label">Iframe URL:</label>
+            <div class="url-input-container">
+              <input type="url" id="iframe-url" class="url-input" placeholder="http://localhost:3000">
+              <button id="save-url" class="save-url-btn">Save</button>
+            </div>
+          </div>
+
+          <div class="config-row">
+            <button id="toggle-overlay" class="toggle-button">
+              Toggle Overlay
+            </button>
+          </div>
+
+          <div class="config-row">
+            <label class="toggle-label">
+              Overlay Mode
+              <label class="toggle-switch">
+                <input type="checkbox" id="config-injection-method">
+                <span class="toggle-slider"></span>
+              </label>
+              Injection Mode
+            </label>
+          </div>
+
+          <div id="overlay-options">
+            <div class="config-row">
+              <label class="config-label">Position:</label>
+              <select id="config-position" class="config-select">
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+                <option value="center">Center</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="injection-options" style="display: none;">
+            <div class="config-row">
+              <label class="config-label">Tag Identifier:</label>
+              <input type="text" id="config-tag-identifier" class="config-input" placeholder="data-testid">
+            </div>
+            
+            <div class="config-row">
+              <label class="config-label">Tag Value:</label>
+              <input type="text" id="config-tag-value" class="config-input" placeholder="category-breadcrumbs">
+            </div>
+
+            <div class="config-row">
+              <label class="config-label">Replacement Width:</label>
+              <input type="text" id="config-replacement-width" class="config-input" placeholder="100%">
+            </div>
+
+            <div class="config-row">
+              <label class="config-label">Replacement Height:</label>
+              <input type="text" id="config-replacement-height" class="config-input" placeholder="400px">
+            </div>
           </div>
           
           <div class="config-row">
@@ -356,6 +511,22 @@
           </div>
           
           <button id="save-config" class="save-config-btn">Save Config</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Prepare Agent</h3>
+        
+        <div class="config-section">
+          <div class="config-row">
+            <label class="config-label">Scrape API:</label>
+            <input type="url" id="agent-url" class="config-input" placeholder="http://localhost:3010" style="min-width: 200px;">
+          </div>
+          
+          <div style="display: flex; gap: 10px;">
+            <button id="scrape-page" class="save-config-btn" style="flex: 1;">Scrape Page</button>
+            <button id="dashboard-btn" class="save-config-btn" style="flex: 1; background: #6b7280; border-color: #6b7280;">Dashboard</button>
+          </div>
         </div>
       </div>
 
